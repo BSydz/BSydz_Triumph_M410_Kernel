@@ -1,4 +1,4 @@
-BSydz_Triumph_M410_Kernel
-=========================
+Triumph_M410_GB_Kernel
+======================
 
-Modified M410 Kernel for the Motorola Triumph
+Triumph M410 GB Kernel

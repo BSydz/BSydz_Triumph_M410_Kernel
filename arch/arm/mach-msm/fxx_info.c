@@ -5,23 +5,6 @@
 
 #include "proc_comm.h"  //SW252-rexer-upld-00+
 
-//Div2-BSP-AC-CPU_Version-00+{
-#define CPU_MSM8255_0_V1 0x105720E1
-#define CPU_MSM8655_0_V1 0x105820E1
-#define CPU_MSM8255_1_V1 0x105700E1
-#define CPU_MSM8655_1_V1 0x105800E1
-#define CPU_MSM8255_0_V2 0x205720E1
-#define CPU_MSM8655_0_V2 0x205820E1
-#define CPU_MSM8255_1_V2 0x205700E1
-#define CPU_MSM8655_1_V2 0x205800E1
-#define CPU_MSM8255_0_V2_12000MHz 0x205760E1
-#define CPU_MSM8655_0_V2_12000MHz 0x205860E1
-#define CPU_MSM8255_1_V2_12000MHz 0x205740E1
-#define CPU_MSM8655_1_V2_12000MHz 0x205840E1
-#define CPU_MSM8255_0_V2_14000MHz 0x2057A0E1
-#define CPU_MSM8655_0_V2_14000MHz 0x2058A0E1
-//Div2-BSP-AC-CPU_Version-00+}
-
 static int proc_calc_metrics(char *page, char **start, off_t off,
 				 int count, int *eof, int len)
 {
@@ -209,9 +192,6 @@ static int baseband_read_proc(char *page, char **start, off_t off,
 		break;
 	case Product_PR5:
 		strcpy(ver, "PR5");
-		break;  
-	case Product_PCR:
-		strcpy(ver, "PCR");
 		break;  
 	case Product_EVB:
 		strcpy(ver, "EVB");
@@ -418,73 +398,6 @@ static int dual_sd_read(char *page, char **start, off_t off, int count, int *eof
 }
 //SW252-rexer-dual_SD-00+]
 
-//Div2-BSP-AC-CPU_Version-00+{
-static int cpu_read_number_proc(char *page, char **start, off_t off,
-				 int count, int *eof, void *data)
-{
-	int len,unknow_flag=0;
-
-	int pp = fih_get_cpu_version_number();
-	char ver[24];
-    switch(pp)
-    {
-        case CPU_MSM8255_0_V1:
-            strcpy(ver, "CPU:MSM8255-0 V1");
-        break;
-        case CPU_MSM8655_0_V1:
-            strcpy(ver, "CPU:MSM8655-0 V1");
-        break;
-        case CPU_MSM8255_1_V1:
-            strcpy(ver, "CPU:MSM8255-1 V1");
-        break;
-        case CPU_MSM8655_1_V1:
-            strcpy(ver, "CPU:MSM8655-1 V1");
-        break;
-        case CPU_MSM8255_0_V2:
-            strcpy(ver, "CPU:MSM8255-0 V2");
-        break;
-        case CPU_MSM8655_0_V2:
-            strcpy(ver, "CPU:MSM8655-0 V2");
-        break;
-        case CPU_MSM8255_1_V2:
-            strcpy(ver, "CPU:MSM8255-1 V2");
-        break;
-        case CPU_MSM8655_1_V2:
-            strcpy(ver, "CPU:MSM8655-1 V2");
-        break;
-        case CPU_MSM8255_0_V2_12000MHz:
-            strcpy(ver, "CPU:MSM8255-0 1.2GHz V2");
-        break;
-        case CPU_MSM8655_0_V2_12000MHz:
-            strcpy(ver, "CPU:MSM8655-0 1.2GHz V2");
-        break;
-        case CPU_MSM8255_1_V2_12000MHz:
-            strcpy(ver, "CPU:MSM8255-1 1.2GHz V2");
-        break;
-        case CPU_MSM8655_1_V2_12000MHz:
-            strcpy(ver, "CPU:MSM8655-1 1.2GHz V2");
-        break;
-        case CPU_MSM8255_0_V2_14000MHz:
-            strcpy(ver, "CPU:MSM8255-0 1.4GHz V2");
-        break;
-        case CPU_MSM8655_0_V2_14000MHz:
-            strcpy(ver, "CPU:MSM8655-0 1.4GHz V2");
-        break;
-        default:
-            unknow_flag=1;
-        break;
-    }
-    if(unknow_flag)
-    {
-        len = snprintf(page, PAGE_SIZE, "%x\n",pp);
-    }
-    else
-    {
-        len = snprintf(page, PAGE_SIZE, "%s\n",ver);
-    }
-    return proc_calc_metrics(page, start, off, count, eof, len);
-}
-//Div2-BSP-AC-CPU_Version-00+}
 
 static struct {
 		char *name;
@@ -493,7 +406,6 @@ static struct {
 	{"devmodel",	device_model_read_proc},
 	{"baseband",	baseband_read_proc},
 	{"bandinfo",	band_read_proc},
-	{"cpu_number",	cpu_read_number_proc},
     {"emmcinfo",	emmc_read_proc},
     {"draminfo",	dram_read_proc},
     {"poweroncause",	poweroncause_read_proc},
