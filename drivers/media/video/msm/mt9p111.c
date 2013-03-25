@@ -4582,6 +4582,7 @@ static int mt9p111_sensor_probe(const struct msm_camera_sensor_info *info,
     s->s_init = mt9p111_sensor_init;
     s->s_release = mt9p111_sensor_release;
     s->s_config  = mt9p111_sensor_config;
+    s->s_mount_angle = 0;
 
 #ifdef CONFIG_MT9P111_STANDBY
     //mt9p111_resume();
