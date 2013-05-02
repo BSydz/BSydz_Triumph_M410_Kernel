@@ -497,7 +497,7 @@ static int netlink_release(struct socket *sock)
 
 	skb_queue_purge(&sk->sk_write_queue);
 
-	if (nlk->pid && !nlk->subscriptions) {
+	if (nlk->pid) {
 		struct netlink_notify n = {
 						.net = sock_net(sk),
 						.protocol = sk->sk_protocol,
@@ -1980,7 +1980,7 @@ static int netlink_seq_show(struct seq_file *seq, void *v)
 		seq_printf(seq, "%p %-3d %-6d %08x %-8d %-8d %p %-8d %-8d\n",
 			   s,
 			   s->sk_protocol,
-			   nlk->pid & 0xffff,
+			   nlk->pid,
 			   nlk->groups ? (u32)nlk->groups[0] : 0,
 			   sk_rmem_alloc_get(s),
 			   sk_wmem_alloc_get(s),
