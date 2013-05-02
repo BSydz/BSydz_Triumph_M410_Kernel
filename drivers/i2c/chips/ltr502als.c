@@ -175,7 +175,7 @@ int read_light_sensor(void)
 {
 	int val;
 	val= i2c_smbus_read_byte_data(ltr502als->client, DATAREG);
-	DBG(KERN_INFO, "READ_LS value=%d\n", (int)(val & DLS_DATA_MASK));
+	DBG(KERN_INFO, "[LTR502ALS] READ_LS value=%d\n", (int)(val & DLS_DATA_MASK));
 	return val >= 0 ? (int)(val & DLS_DATA_MASK) : (-1);
 }
 EXPORT_SYMBOL(read_light_sensor);
@@ -184,7 +184,7 @@ int read_proximity_sensor(void)
 {
 	int val;
 	val= i2c_smbus_read_byte_data(ltr502als->client, DATAREG);
-	DBG(KERN_INFO, "READ_PS value=%d\n", (int)(val & DPS_DATA_MASK)>>7);
+	DBG(KERN_INFO, "[LTR502ALS] READ_PS value=%d\n", (int)(val & DPS_DATA_MASK)>>7);
 	return val >= 0 ? (int)(val & DPS_DATA_MASK)>>7 : (-1);
 }
 EXPORT_SYMBOL(read_proximity_sensor);
@@ -211,12 +211,12 @@ static inline void ltr502als_poweroff(void)
 		//DBG(KERN_INFO, "(READ)(CONFIG REG ret:0x%x)\n", val);
 		val = 0x8;
 		ret = i2c_smbus_write_byte_data(ltr502als->client,CONFIGREG, val);
-		DBG(KERN_INFO, "(WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n", ret, val);
+		DBG(KERN_INFO, "[LTR502ALS] (WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n", ret, val);
 		power_use--;
 	}
 	else
 	{
-		DBG(KERN_INFO, "power_use:%d\n", power_use);
+		DBG(KERN_INFO, "[LTR502ALS] power_use:%d\n", power_use);
 	}	
 }
 
@@ -232,12 +232,12 @@ static void ltr502als_poweron(void)
 		//val = (val & (~POWER_MASK)) | POWER_UP;
 		val = 0x2;
 		ret = i2c_smbus_write_byte_data(ltr502als->client,CONFIGREG, val);
-		DBG(KERN_INFO, "(WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val );
+		DBG(KERN_INFO, "[LTR502ALS] (WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val );
 		power_use++;
 	}
 	else
 	{
-		DBG(KERN_INFO, "power_use:%d\n", power_use);
+		DBG(KERN_INFO, "[LTR502ALS] power_use:%d\n", power_use);
 	}	
 		
 }
@@ -264,7 +264,7 @@ static void ltr502als_active_ps(void)
 			#endif
 			//DIV5-BSP-CH-SF6-SENSOR-PORTING04++]
 			ret = i2c_smbus_write_byte_data(ltr502als->client, CONFIGREG, val);
-			DBG(KERN_INFO, "(WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val);	
+			DBG(KERN_INFO, "[LTR502ALS] (WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val);	
 		}
 		else
 		{
@@ -272,13 +272,13 @@ static void ltr502als_active_ps(void)
 			//DBG(KERN_INFO, "(READ)(CONFIG REG ret:0x%x)\n",val);
 			val = 0x1;
 			ret = i2c_smbus_write_byte_data(ltr502als->client, CONFIGREG, val);
-			DBG(KERN_INFO, "(WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val);	
+			DBG(KERN_INFO, "[LTR502ALS] (WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val);	
 		}
 		ps_active++;
 	}
 	else
 	{
-		DBG(KERN_INFO, "ps_active:%d\n", ps_active);
+		DBG(KERN_INFO, "[LTR502ALS] ps_active:%d\n", ps_active);
 	}	
 	
 }
@@ -306,7 +306,7 @@ static void ltr502als_active_ls(void)
 			#endif
 			//DIV5-BSP-CH-SF6-SENSOR-PORTING04++]
 			ret = i2c_smbus_write_byte_data(ltr502als->client,CONFIGREG, val );
-			DBG(KERN_INFO, "(WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val );
+			DBG(KERN_INFO, "[LTR502ALS] (WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val );
 		}
 		else
 		{
@@ -314,7 +314,7 @@ static void ltr502als_active_ls(void)
 			//DBG(KERN_INFO, "(READ)(CONFIG REG ret:0x%x)\n",val);
 			val = 0x0;
 			ret = i2c_smbus_write_byte_data(ltr502als->client,CONFIGREG, val);
-			DBG(KERN_INFO, "(WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val );	
+			DBG(KERN_INFO, "[LTR502ALS] (WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val );	
 		}
 		/* FIH, Louis, 2010/08/13 { */
 		//mdelay(700);
@@ -322,7 +322,7 @@ static void ltr502als_active_ls(void)
 	}
 	else
 	{
-		DBG(KERN_INFO, "ls_active:%d\n", ls_active);
+		DBG(KERN_INFO, "[LTR502ALS] ls_active:%d\n", ls_active);
 	}	
 }
 
@@ -338,7 +338,7 @@ static void ltr502als_inactive_ls(void)
 			//DBG(KERN_INFO, "(READ)(CONFIG REG ret:0x%x)\n",val);
 			val = 0x1;
 			ret = i2c_smbus_write_byte_data(ltr502als->client,CONFIGREG, val );
-			DBG(KERN_INFO, "(WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val );		
+			DBG(KERN_INFO, "[LTR502ALS] (WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val );		
 		}
 		else
 		{
@@ -346,13 +346,13 @@ static void ltr502als_inactive_ls(void)
 			//DBG(KERN_INFO, "(READ)(CONFIG REG ret:0x%x)\n",val);
 			val = 0x8;
 			ret = i2c_smbus_write_byte_data(ltr502als->client,CONFIGREG, val);
-			DBG(KERN_INFO, "(WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val );	
+			DBG(KERN_INFO, "[LTR502ALS] (WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val );	
 		}
 		ls_active--;
 	}
 	else
 	{
-		DBG(KERN_INFO, "ls_active:%d\n", ls_active);
+		DBG(KERN_INFO, "[LTR502ALS] ls_active:%d\n", ls_active);
 	}	
 } 
 
@@ -369,7 +369,7 @@ static void ltr502als_inactive_ps(void)
 			//DBG(KERN_INFO, "(READ)(CONFIG REG ret:0x%x)\n",val);
 			val = 0x0;
 			ret = i2c_smbus_write_byte_data(ltr502als->client,CONFIGREG, val);
-			DBG(KERN_INFO, "(WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val);		
+			DBG(KERN_INFO, "[LTR502ALS] (WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val);		
 		}
 		else
 		{
@@ -377,13 +377,13 @@ static void ltr502als_inactive_ps(void)
 			//DBG(KERN_INFO, "(READ)(CONFIG REG ret:0x%x)\n",val);
 			val = 0x8;
 			ret = i2c_smbus_write_byte_data(ltr502als->client,CONFIGREG, val);
-			DBG(KERN_INFO, "(WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val);	
+			DBG(KERN_INFO, "[LTR502ALS] (WRITE)(CONFIG REG ret:0x%x, val:0x%x)\n",ret, val);	
 		}
 		ps_active--;
 	}
 	else
 	{
-		DBG(KERN_INFO, " ps_active:%d\n", ps_active);
+		DBG(KERN_INFO, "[LTR502ALS]  ps_active:%d\n", ps_active);
 	}
 	
 } 
@@ -393,10 +393,10 @@ static void psensor_work_queue(struct work_struct *work)
 {
 	if(psensor_control_flow)
 	{
-		printk(KERN_INFO "[Colin]control\n");
+		printk(KERN_INFO "[LTR502ALS] [Colin]control\n");
 		//if(read_proximity_sensor() == 0)
 		{
-			printk(KERN_INFO "[Colin]wakeup\n");
+			printk(KERN_INFO "[LTR502ALS] [Colin]wakeup\n");
 			wake_up_p();
 		}
 	}
@@ -420,24 +420,24 @@ static irqreturn_t ltr502als_isr(int irq, void *dev_id)
     	u8 val_INT = -1;
     	u8 val = -1;
 	val_INT = i2c_smbus_read_byte_data(ltr502als->client, INTREG);
-    	printk("[ltr502als](INTREG:0x%x)\n", val_INT);	 
+    	printk("[LTR502ALS](INTREG:0x%x)\n", val_INT);	 
 
 	if(val_INT & DPS_INT_MASK)
     	{
 		//read ps		
 		val= i2c_smbus_read_byte_data(ltr502als->client, DATAREG);
-		printk("[ltr502als](DATA:0x%x)\n",val);
+		printk("[LTR502ALS](DATA:0x%x)\n",val);
 
 		val = (val & DPS_DATA_MASK)>>7;
-		printk("[ltr502als](DPS_DATA:0x%x)\n",val);
+		printk("[LTR502ALS](DPS_DATA:0x%x)\n",val);
 	}
 	if(val_INT & DLS_INT_MASK)
 	{
 		//read as		
 		val= i2c_smbus_read_byte_data(ltr502als->client, DATAREG);	
-		printk("[ltr502als](DATA:0x%x)\n",val);
+		printk("[LTR502ALS](DATA:0x%x)\n",val);
 		val = val & DLS_DATA_MASK;
-		printk("[ltr502als](DLS_DATA:0x%x)\n",val);
+		printk("[LTR502ALS](DLS_DATA:0x%x)\n",val);
 	}	
 #endif  
 	DBG(KERN_NOTICE, "\n");
@@ -469,18 +469,18 @@ static int ltr502als_initchip(void)
 	ret = i2c_smbus_read_byte_data(ltr502als->client, CONFIGREG);
 	if(ret < 0)
 	{
-		printk(KERN_ERR "[ltr502als]%s: light-sensor fail, value=%d\n", __func__, ret);
+		printk(KERN_ERR "[LTR502ALS]%s: light-sensor fail, value=%d\n", __func__, ret);
 		return -1;
 	}	
 	else
-		DBG(KERN_INFO, "light-sensor addr:0x%x value=%d\n", CONFIGREG, ret);
+		DBG(KERN_INFO, "[LTR502ALS] light-sensor addr:0x%x value=%d\n", CONFIGREG, ret);
 		
 	Command = 0x10;
   	ret = i2c_smbus_write_byte_data(ltr502als->client, TCREG, Command);
-	DBG(KERN_INFO, "write TCREG(ret:%d)\n",ret) ;
+	DBG(KERN_INFO, "[LTR502ALS] write TCREG(ret:%d)\n",ret) ;
 
 	val = i2c_smbus_read_byte_data(ltr502als->client, TCREG);
-	DBG(KERN_INFO, "read TCREG:0x%x\n",val);
+	DBG(KERN_INFO, "[LTR502ALS] read TCREG:0x%x\n",val);
 
 	                    	 
 	val = i2c_smbus_read_byte_data(ltr502als->client, DPSCTROL);
@@ -574,12 +574,12 @@ static ssize_t ltr502als_read(struct file *file, char __user *buffer, size_t siz
 	st[1] = (value & DPS_DATA_MASK)>>7;
 	st[0] = value & DLS_DATA_MASK;
 
-	DBG(KERN_INFO, "ltr502als_read: PS level = %d\n", st[1]);	
-	DBG(KERN_INFO, "ltr502als_read: ALS level = %d\n", st[0]);
+	DBG(KERN_INFO, "[LTR502ALS] ltr502als_read: PS level = %d\n", st[1]);	
+	DBG(KERN_INFO, "[LTR502ALS] ltr502als_read: ALS level = %d\n", st[0]);
 	if(copy_to_user(buffer, st, sizeof(char)*2))
 	{
 		kfree(st);
-		printk(KERN_ERR "[ltr502als]%s: [line:%d] copy_to_user failed\n", __func__, __LINE__);
+		printk(KERN_ERR "[LTR502ALS]%s: [line:%d] copy_to_user failed\n", __func__, __LINE__);
 		return -EFAULT;
 	}
 	kfree(st);
@@ -600,45 +600,45 @@ static int ltr502als_ioctl(struct inode *inode, struct file *file, unsigned int 
     void __user *argp = (void __user *)arg;
     int value;
 
-	DBG(KERN_INFO, "cmd(%d)\n", cmd);
+	DBG(KERN_INFO, "[LTR502ALS] cmd(%d)\n", cmd);
 	switch (cmd)
 	{
 		case INIT_CHIP:			
 			ret = ltr502als_initchip();
-			DBG(KERN_INFO, "INIT_CHIP ret=%d\n", ret);
+			DBG(KERN_INFO, "[LTR502ALS] INIT_CHIP ret=%d\n", ret);
 			return ret;
 		case POWEROFF_CHIP:
 			ltr502als_poweroff();
-			DBG(KERN_INFO, "POWEROFF_CHIP\n");
+			DBG(KERN_INFO, "[LTR502ALS] POWEROFF_CHIP\n");
 			break;
 		case POWERON_CHIP:
 			ltr502als_poweron();
-			DBG(KERN_INFO, "POWERON_CHIP\n");
+			DBG(KERN_INFO, "[LTR502ALS] POWERON_CHIP\n");
 			break;
 		case ACTIVE_PS:
 			ltr502als_active_ps();
-			DBG(KERN_INFO, "ACTIVE_PS\n");
+			DBG(KERN_INFO, "[LTR502ALS] ACTIVE_PS\n");
 			break;
 		case ACTIVE_LS:
 			ltr502als_active_ls();
-			DBG(KERN_INFO, "ACTIVE_LS\n");
+			DBG(KERN_INFO, "[LTR502ALS] ACTIVE_LS\n");
 			break;
 		case INACTIVE_PS:
 			ltr502als_inactive_ps();
-			DBG(KERN_INFO, "INACTIVE_PS\n");
+			DBG(KERN_INFO, "[LTR502ALS] INACTIVE_PS\n");
 			break;
 		case INACTIVE_LS:
 			ltr502als_inactive_ls();
-			DBG(KERN_INFO, "INACTIVE_LS\n");
+			DBG(KERN_INFO, "[LTR502ALS] INACTIVE_LS\n");
 			break;
 		case READ_PS:
 			val= i2c_smbus_read_byte_data(ltr502als->client, DATAREG);
-			DBG(KERN_INFO, "READ_PS value=%d\n", (int)(val & DPS_DATA_MASK)>>7);
+			DBG(KERN_INFO, "[LTR502ALS] READ_PS value=%d\n", (int)(val & DPS_DATA_MASK)>>7);
 			//printk(KERN_INFO "READ_PS value=%d\n", (int)(val & DPS_DATA_MASK)>>7);
 			return (int)(val & DPS_DATA_MASK)>>7;
 		case READ_LS:
 			val= i2c_smbus_read_byte_data(ltr502als->client, DATAREG);
-			DBG(KERN_INFO, "READ_LS value=%d\n", (int)(val & DLS_DATA_MASK));
+			DBG(KERN_INFO, "[LTR502ALS] READ_LS value=%d\n", (int)(val & DLS_DATA_MASK));
 			return (int)(val & DLS_DATA_MASK);
         case SET_PS_THRESHOLD:
         {                	
@@ -648,14 +648,14 @@ static int ltr502als_ioctl(struct inode *inode, struct file *file, unsigned int 
 			val = i2c_smbus_read_byte_data(ltr502als->client, DPSCTROL);
 			
 			Command = (val & 0xC0) | value;
-			DBG(KERN_INFO, "SET_PS_THRESHOLD addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", DPSCTROL, value, val, Command); 
+			DBG(KERN_INFO, "[LTR502ALS] SET_PS_THRESHOLD addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", DPSCTROL, value, val, Command); 
 			ret = i2c_smbus_write_byte_data(ltr502als->client, DPSCTROL, Command);
 			break;
         }
         case GET_PS_THRESHOLD:
         {
 			val = i2c_smbus_read_byte_data(ltr502als->client, DPSCTROL);
-			DBG(KERN_INFO, "GET_PS_THRESHOLD addr:0x%x, buf[0]:0x%x\n", DPSCTROL, val);  
+			DBG(KERN_INFO, "[LTR502ALS] GET_PS_THRESHOLD addr:0x%x, buf[0]:0x%x\n", DPSCTROL, val);  
             return (int)(val & 0x1f);
         }
 		case SET_PS_ACCURACY:
@@ -667,7 +667,7 @@ static int ltr502als_ioctl(struct inode *inode, struct file *file, unsigned int 
 			val = i2c_smbus_read_byte_data(ltr502als->client, DPSCTROL);
 
             Command = (val & 0x1f) | value;
-            DBG(KERN_INFO, "SET_PS_ACCURACY addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", DPSCTROL, value, val, Command); 
+            DBG(KERN_INFO, "[LTR502ALS] SET_PS_ACCURACY addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", DPSCTROL, value, val, Command); 
 			ret = i2c_smbus_write_byte_data(ltr502als->client, DPSCTROL, Command); 
 			break;	
 		}
@@ -680,7 +680,7 @@ static int ltr502als_ioctl(struct inode *inode, struct file *file, unsigned int 
 			val = i2c_smbus_read_byte_data(ltr502als->client, DLSCTROL);
 
 			Command = (val & 0x1f) | value;
-			DBG(KERN_INFO, "SET_LS_LEVEL addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", DLSCTROL, value, val, Command); 
+			DBG(KERN_INFO, "[LTR502ALS] SET_LS_LEVEL addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", DLSCTROL, value, val, Command); 
     		ret = i2c_smbus_write_byte_data(ltr502als->client, DLSCTROL, Command);
 			break;	
 		}
@@ -692,7 +692,7 @@ static int ltr502als_ioctl(struct inode *inode, struct file *file, unsigned int 
 			val = i2c_smbus_read_byte_data(ltr502als->client, DLSCTROL);
 
 			Command = (val & 0xe0) | value;
-			DBG(KERN_INFO, "SET_LS_LOWTHRESH addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", DLSCTROL, value, val, Command); 
+			DBG(KERN_INFO, "[LTR502ALS] SET_LS_LOWTHRESH addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", DLSCTROL, value, val, Command); 
     			ret = i2c_smbus_write_byte_data(ltr502als->client, DLSCTROL, Command);
 			break;	
 		}
@@ -705,7 +705,7 @@ static int ltr502als_ioctl(struct inode *inode, struct file *file, unsigned int 
 			val = i2c_smbus_read_byte_data(ltr502als->client, TCREG);
 
 			Command = (val & 0x07) | value;
-			DBG(KERN_INFO, "SET_PS_PERSIST addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", TCREG, value, val, Command); 
+			DBG(KERN_INFO, "[LTR502ALS] SET_PS_PERSIST addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", TCREG, value, val, Command); 
     			ret = i2c_smbus_write_byte_data(ltr502als->client, TCREG, Command);
 			break;
 		}
@@ -717,7 +717,7 @@ static int ltr502als_ioctl(struct inode *inode, struct file *file, unsigned int 
 			val = i2c_smbus_read_byte_data(ltr502als->client, TCREG);
 
 			Command = (val & 0x34) | value;
-			DBG(KERN_INFO, "SET_LS_PERSIST addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", TCREG, value, val, Command); 
+			DBG(KERN_INFO, "[LTR502ALS] SET_LS_PERSIST addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", TCREG, value, val, Command); 
     			ret = i2c_smbus_write_byte_data(ltr502als->client, TCREG, Command);
 			break;
 		}
@@ -730,7 +730,7 @@ static int ltr502als_ioctl(struct inode *inode, struct file *file, unsigned int 
 			val = i2c_smbus_read_byte_data(ltr502als->client, TCREG);
 
 			Command = (val & 0x33) | value;
-			DBG(KERN_INFO, "SET_INTEGRA_TIME addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", TCREG, value, val, Command); 
+			DBG(KERN_INFO, "[LTR502ALS] SET_INTEGRA_TIME addr:0x%x, value:%d, buf[0]:0x%x, buf[1]:0x%x\n", TCREG, value, val, Command); 
     			ret = i2c_smbus_write_byte_data(ltr502als->client, TCREG, Command);
 			break;
 		}
@@ -752,7 +752,7 @@ static int ltr502als_ioctl(struct inode *inode, struct file *file, unsigned int 
 			enable_irq_wake(ltr502als->client->irq);
 			iPhoneCall = 1;
 			//printk(KERN_INFO "[ltr502als]ACTIVE_PHONE_CALL\n");
-			DBG(KERN_NOTICE, "ACTIVE_PHONE_CALL\n");
+			DBG(KERN_NOTICE, "[LTR502ALS] ACTIVE_PHONE_CALL\n");
 			break;
 		case INACTIVE_PHONE_CALL:
 			disable_irq_wake(ltr502als->client->irq);
@@ -772,10 +772,10 @@ static int ltr502als_ioctl(struct inode *inode, struct file *file, unsigned int 
 		//Div2D5-OwenHuang-FBx_Psensor_Pending_IRQ-00+}
 		
 			//printk(KERN_INFO "[ltr502als]INACTIVE_PHONE_CALL\n");
-			DBG(KERN_NOTICE, "INACTIVE_PHONE_CALL\n");
+			DBG(KERN_NOTICE, "[LTR502ALS] INACTIVE_PHONE_CALL\n");
 			break;		
 		default:
-			DBG(KERN_INFO, "Proximity sensor ioctl default : NO ACTION!!\n");
+			DBG(KERN_INFO, "[LTR502ALS] Proximity sensor ioctl default : NO ACTION!!\n");
 			break;
 	}
 
@@ -831,13 +831,13 @@ _OWEN_ static void ALSPS_early_suspend_func(struct early_suspend * h)
 		Command = (val & 0xf3) | 0x08;	//power down mode
 		
 		ret = i2c_smbus_write_byte_data(ltr502als->client, CONFIGREG, Command);
-		DBG(KERN_INFO, "addr:0x%x, value:0x%x, command:0x%x, return:%d\n", CONFIGREG, val, Command, ret);
+		DBG(KERN_INFO, "[LTR502ALS] addr:0x%x, value:0x%x, command:0x%x, return:%d\n", CONFIGREG, val, Command, ret);
 	}
 //DIV5-BSP-CH-SF6-SENSOR-PORTING04++[
 #if defined(CONFIG_FIH_PROJECT_SF4Y6)
 	else
 	{
-		DBG(KERN_INFO, "[SF6]early_suspend control flow\n");
+		DBG(KERN_INFO, "[LTR502ALS] [SF6]early_suspend control flow\n");
 		psensor_control_flow = 1;
 	}
 #endif
@@ -857,32 +857,32 @@ _OWEN_ static void ALSPS_late_resume_func(struct early_suspend *h)
 			Command = 0x02;
 		
 			ret = i2c_smbus_write_byte_data(ltr502als->client, CONFIGREG, Command);
-			DBG(KERN_INFO, "addr:0x%x, command:0x%x, return:%d\n", CONFIGREG, Command, ret);		
+			DBG(KERN_INFO, "[LTR502ALS] addr:0x%x, command:0x%x, return:%d\n", CONFIGREG, Command, ret);		
 		}
 		else if(ps_active && !ls_active) {
 			Command = 0x01;
 		
 			ret = i2c_smbus_write_byte_data(ltr502als->client, CONFIGREG, Command);
-			DBG(KERN_INFO, "addr:0x%x, command:0x%x, return:%d\n", CONFIGREG, Command, ret);		
+			DBG(KERN_INFO, "[LTR502ALS] addr:0x%x, command:0x%x, return:%d\n", CONFIGREG, Command, ret);		
 		}
 		else if(!ps_active && ls_active) {
 			Command = 0x00;
 		
 			ret = i2c_smbus_write_byte_data(ltr502als->client, CONFIGREG, Command);
-			DBG(KERN_INFO, "addr:0x%x, command:0x%x, return:%d\n", CONFIGREG, Command, ret);		
+			DBG(KERN_INFO, "[LTR502ALS] addr:0x%x, command:0x%x, return:%d\n", CONFIGREG, Command, ret);		
 		}
 		else {
 			Command = 0x08;
 		
 			ret = i2c_smbus_write_byte_data(ltr502als->client, CONFIGREG, Command);
-			DBG(KERN_INFO, "addr:0x%x, command:0x%x, return:%d\n", CONFIGREG, Command, ret);	
+			DBG(KERN_INFO, "[LTR502ALS] addr:0x%x, command:0x%x, return:%d\n", CONFIGREG, Command, ret);	
 		}
 	}
 	//DIV5-BSP-CH-SF6-SENSOR-PORTING04++[
 	#if defined(CONFIG_FIH_PROJECT_SF4Y6)
 	else 
 	{
-		DBG(KERN_INFO, "[SF6]late resume control flow\n");
+		DBG(KERN_INFO, "[LTR502ALS] [SF6]late resume control flow\n");
 		psensor_control_flow = 0;
 	}
 	#endif
@@ -1045,13 +1045,13 @@ static int ltr502als_probe(struct i2c_client *client,
 
 	ltr502als_client = client;
 	
-	DBG(KERN_INFO, "i2c addr:%d, adapter:%d\n", (int)ltr502als_client->addr, (int)ltr502als_client->adapter);
+	DBG(KERN_INFO, "[LTR502ALS] i2c addr:%d, adapter:%d\n", (int)ltr502als_client->addr, (int)ltr502als_client->adapter);
 
 	/* allocate memory */
 	ltr502als = kzalloc(sizeof(struct ltr502als_platform_data), GFP_KERNEL);
 	if (!ltr502als)
 	{
-		printk(KERN_ERR "[ltr502als]%s: error\n", __func__);
+		printk(KERN_ERR "[LTR502ALS]%s: error\n", __func__);
 		return -ENOMEM;
 	}
 	memset(ltr502als, 0, sizeof(struct ltr502als_platform_data));
@@ -1062,28 +1062,28 @@ static int ltr502als_probe(struct i2c_client *client,
 
 	if (0 != misc_register(&ltr502als_dev))
 	{
-		printk(KERN_ERR "[ltr502als]%s: ltr502als_dev register failed.\n", __func__);
+		printk(KERN_ERR "[LTR502ALS]%s: ltr502als_dev register failed.\n", __func__);
 		return 0;
 	}
 	else
 	{
-		DBG(KERN_INFO, "ltr502als_dev register ok.\n");
+		DBG(KERN_INFO, "[LTR502ALS] ltr502als_dev register ok.\n");
 	}
 	
 	ret = request_irq(client->irq, ltr502als_isr, IRQF_TRIGGER_FALLING, "ltr502als", ltr502als); 
 	if (ret) 
 	{
-		printk(KERN_ERR "[ltr502als]%s: Can't allocate irq %d\n", __func__, client->irq);
+		printk(KERN_ERR "[LTR502ALS]%s: Can't allocate irq %d\n", __func__, client->irq);
 		goto fail_irq;
 	}
-	DBG(KERN_INFO, "[line:%d] Requst PRO_INT pin client->irq:%d\n", __LINE__ , client->irq);
+	DBG(KERN_INFO, "[LTR502ALS] [line:%d] Requst PRO_INT pin client->irq:%d\n", __LINE__ , client->irq);
 	
 	disable_irq(client->irq);
 	mdelay(200);
 	ret = ltr502als_initchip();
 	if(ret < 0)
 	{
-		printk(KERN_ERR "[ltr502als]%s: ltr502als_initchip failed.\n", __func__);
+		printk(KERN_ERR "[LTR502ALS]%s: ltr502als_initchip failed.\n", __func__);
 		//Div2D5-OwenHuang-FB0_Sensors-Porting_New_Sensors_Architecture-00*{
 		//return -1;
 		ret = -EIO;
@@ -1095,7 +1095,7 @@ static int ltr502als_probe(struct i2c_client *client,
 	ALSPS_early_suspend.resume = ALSPS_late_resume_func;
 	register_early_suspend(&ALSPS_early_suspend);
 
-	printk(KERN_INFO "[ltr502als]%s: probe result(%d)\n", __func__, ret); ///Div2D5-OwenHuang-BSP2030_FB0_FQC_ALS-00+
+	printk(KERN_INFO "[LTR502ALS]%s: probe result(%d)\n", __func__, ret); ///Div2D5-OwenHuang-BSP2030_FB0_FQC_ALS-00+
 	
 	return ret;
 
@@ -1141,9 +1141,9 @@ static int __init ltr502als_i2c_init(void)
 	int ret;
 	ret = i2c_add_driver(&ltr502als_driver);
 	if(ret) 
-        	printk(KERN_ERR "[ltr502als]%s: Driver registration failed\n", __func__);
+        	printk(KERN_ERR "[LTR502ALS]%s: Driver registration failed\n", __func__);
 	else
-		DBG(KERN_INFO, "ltr502als add I2C driver ok\n");
+		DBG(KERN_INFO, "[LTR502ALS] ltr502als add I2C driver ok\n");
 
 	return ret;
 }
