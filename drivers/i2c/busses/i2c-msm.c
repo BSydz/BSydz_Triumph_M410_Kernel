@@ -30,6 +30,7 @@
 #include <linux/timer.h>
 #include <linux/remote_spinlock.h>
 #include <linux/pm_qos_params.h>
+#include <linux/wakelock.h>
 #include <mach/gpio.h>
 
 #ifdef CONFIG_FIH_FTM
@@ -89,6 +90,7 @@ struct msm_i2c_dev {
 	remote_mutex_t               r_lock;
 	int                          suspended;
 	struct mutex                 mlock;
+	struct wake_lock             wakelock;
 	struct msm_i2c_platform_data *pdata;
 	struct timer_list            pwr_timer;
 	int                          clk_state;
@@ -346,7 +348,7 @@ msm_i2c_poll_notbusy(struct msm_i2c_dev *dev)
 static int
 msm_i2c_recover_bus_busy(struct msm_i2c_dev *dev, struct i2c_adapter *adap)
 {
-	int i;
+	int i = 0;
 	int gpio_clk;
 	int gpio_dat;
 	uint32_t status = readl(dev->base + I2C_STATUS);
@@ -378,22 +380,27 @@ msm_i2c_recover_bus_busy(struct msm_i2c_dev *dev, struct i2c_adapter *adap)
 		       dev->base + I2C_WRITE_DATA);
 	}
 
-	for (i = 0; i < 9; i++) {
-		if (gpio_get_value(gpio_dat) && gpio_clk_status)
-			break;
-		gpio_direction_output(gpio_clk, 0);
-		udelay(5);
-		gpio_direction_output(gpio_dat, 0);
-		udelay(5);
-		gpio_direction_input(gpio_clk);
-		udelay(5);
-		if (!gpio_get_value(gpio_clk))
-			usleep_range(20, 30);
-		if (!gpio_get_value(gpio_clk))
-			msleep(10);
-		gpio_clk_status = gpio_get_value(gpio_clk);
-		gpio_direction_input(gpio_dat);
-		udelay(5);
+	/* If both gpios are the same and zero, they are not properly set */
+	if (gpio_clk == 0 && gpio_dat == 0) {
+		udelay(10);
+	} else {
+		for (i = 0; i < 9; i++) {
+			if (gpio_get_value(gpio_dat) && gpio_clk_status)
+				break;
+			gpio_direction_output(gpio_clk, 0);
+			udelay(5);
+			gpio_direction_output(gpio_dat, 0);
+			udelay(5);
+			gpio_direction_input(gpio_clk);
+			udelay(5);
+			if (!gpio_get_value(gpio_clk))
+				usleep_range(20, 30);
+			if (!gpio_get_value(gpio_clk))
+				msleep(10);
+			gpio_clk_status = gpio_get_value(gpio_clk);
+			gpio_direction_input(gpio_dat);
+			udelay(5);
+		}
 	}
 	dev->pdata->msm_i2c_config_gpio(adap->nr, 1);
 	udelay(10);
@@ -426,9 +433,11 @@ msm_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
 	int check_busy = 1;
 
 	del_timer_sync(&dev->pwr_timer);
+	wake_lock(&dev->wakelock);
 	mutex_lock(&dev->mlock);
 	if (dev->suspended) {
 		mutex_unlock(&dev->mlock);
+		wake_unlock(&dev->wakelock);
 		return -EIO;
 	}
 
@@ -596,6 +605,7 @@ wait_for_int:
 					PM_QOS_DEFAULT_VALUE);
 	mod_timer(&dev->pwr_timer, (jiffies + 3*HZ));
 	mutex_unlock(&dev->mlock);
+	wake_unlock(&dev->wakelock);
 	return ret;
 }
 
@@ -687,6 +697,8 @@ msm_i2c_probe(struct platform_device *pdev)
 	dev->one_bit_t = USEC_PER_SEC/pdata->clk_freq;
 	spin_lock_init(&dev->lock);
 	platform_set_drvdata(pdev, dev);
+
+	wake_lock_init(&dev->wakelock, WAKE_LOCK_SUSPEND, "msm-i2c");
 
 	clk_enable(clk);
 
@@ -781,6 +793,7 @@ msm_i2c_remove(struct platform_device *pdev)
 	dev->suspended = 1;
 	mutex_unlock(&dev->mlock);
 	mutex_destroy(&dev->mlock);
+	wake_lock_destroy(&dev->wakelock);
 	del_timer_sync(&dev->pwr_timer);
 	if (dev->clk_state != 0)
 		msm_i2c_pwr_mgmt(dev, 0);
