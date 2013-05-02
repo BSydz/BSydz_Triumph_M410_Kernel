@@ -6066,9 +6066,6 @@ static void __init msm_fb_add_devices(void)
 	msm_fb_register_device("dtv", &dtv_pdata);
 #endif	
 	msm_fb_register_device("tvenc", &atv_pdata);
-#ifdef CONFIG_FB_MSM_TVOUT
-	msm_fb_register_device("tvout_device", NULL);
-#endif
 }
 
 //SW2-6-MM-JH-Display_Flag-00+
