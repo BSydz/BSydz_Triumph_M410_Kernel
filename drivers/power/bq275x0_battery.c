@@ -134,6 +134,10 @@ static bool ignore_batt_det = false;
 static struct proc_dir_entry *cbverify_proc_entry;
 static int product_id = 0;
 
+//Slate Code Start
+int fih_charger; //Slate Code DEBUG
+EXPORT_SYMBOL(fih_charger);
+//Slate Code End
 static struct bq275x0_device_info *di;
 extern u32 msm_batt_get_batt_status(void);
 extern void msm_batt_notify_over_temperature(bool over_temperature);
@@ -1046,8 +1050,12 @@ static void bq275x0_battery_update_flags(u16 *pflags)
             dev_info(&di->client->dev, "FC flag is set, but soc is not 100\n");
             di->charge_rsoc = 100;
         }
-        
-        if (test_on && test_item[BQ275X0_CBVERIFY_CHARGING_TEST])
+//Slate Code Start
+        if (fih_charger == 1)
+	    	msm_batt_notify_charging_state(false);
+		else if (fih_charger == 2)
+	    	msm_batt_notify_charging_state(true); //Slate Code Ends
+        else if (test_on && test_item[BQ275X0_CBVERIFY_CHARGING_TEST])
             msm_batt_notify_charging_state(test_value[BQ275X0_CBVERIFY_CHARGING_TEST]);            
         else
             msm_batt_notify_charging_state(di->charging);
@@ -1516,6 +1524,21 @@ static void bq275x0_battery_update(struct work_struct *work)
     wake_unlock(&di->bq275x0_wakelock);
     wake_lock_timeout(&di->bq275x0_wakelock, 1 * HZ);
 }
+//Slate Code Start Here
+void bq27x0_battery_charging_status_update(void)
+{
+     //dev_info(di->dev, "Shashi DEBUG bq27x0_battery_charging_status_update\n");
+     wake_lock(&di->bq275x0_wakelock);
+     schedule_work(&di->bq275x0_update);
+     #if 0
+	 mod_timer(&di->polling_timer,
+            jiffies + msecs_to_jiffies(1000));
+     di->polling_interval = 1000;
+     fih_update_timer = 1;
+     #endif
+}
+//Slate code Ends here
+EXPORT_SYMBOL(bq27x0_battery_charging_status_update);
 
 static void bq275x0_battery_update_soc(struct work_struct *work)
 {

@@ -372,48 +372,6 @@ int fih_write_fihdbg_config_nv( unsigned char* fih_debug )
     return ret;
 }
 EXPORT_SYMBOL(fih_write_fihdbg_config_nv);
-
-//SW2-5-1-MP-Modem_Debug_NV-00+[
-/*--------------------------------------------------------------------------*
- * Function    : fih_write_modem_debug_nv
- *
- * Description :
- *     Write modem debug NV correspondingly to make sure valid RAM dump can be generated.
- *
- * NV Item	Name						AutoDownload Action	Reset Action	No Action
- * 905		NV_ERR_FATAL_OPTIONS_I		0					1			2
- * 4399		NV_DETECT_HW_RESET_I		1					0			0
- * 6470		NV_CACHE_WT_I				1					0			0
- *
- * Parameters  :
- *     Value of NV_ERR_FATAL_OPTIONS_I
- *
- * Return value: Integer
- *     Zero     - Successful
- *     Not zero - Fail
- *--------------------------------------------------------------------------*/
-int fih_write_modem_debug_nv( int value )
-{
-    unsigned smem_response;
-    uint32_t oem_cmd = SMEM_PROC_COMM_OEM_NV_WRITE;
-    unsigned int cmd_para[FIH_DEBUG_CMD_DATA_SIZE];
-    int ret = 0;
-
-    cmd_para[0] = NV_ERR_FATAL_OPTIONS_I;
-    cmd_para[1] = value;
-    ret = msm_proc_comm_oem_n(PCOM_CUSTOMER_CMD1, &oem_cmd, &smem_response, cmd_para, sizeof(int));
-    if(ret != 0)
-    {
-    	printk(KERN_ERR
-            "%s: SMEM_PROC_COMM_OEM_FIH FAILED!!\n",
-            __func__);
-    }
-    printk(KERN_INFO "fih_write_modem_debug_nv() 0x%x\n", value);
-	
-    return ret;
-}
-EXPORT_SYMBOL(fih_write_modem_debug_nv);
-//SW2-5-1-MP-Modem_Debug_NV-00+]
 //SW2-5-1-MP-DbgCfgTool-00+]
 
 int msm_proc_comm_oem_multi(unsigned cmd, unsigned *data1, unsigned *data2, unsigned *cmd_parameter, int number)

@@ -631,8 +631,7 @@ int dbgcfgtool_ioctl(
             }
             else
             {
-                //SW2-5-1-MP-Modem_Debug_NV-00- ret = DbgCfgSetErrorAction(DbgArg.value);
-                ret = fih_write_modem_debug_nv(DbgArg.value); //SW2-5-1-MP-Modem_Debug_NV-00+
+                ret = DbgCfgSetErrorAction(DbgArg.value);
             }
 
             if( ret != 0 )

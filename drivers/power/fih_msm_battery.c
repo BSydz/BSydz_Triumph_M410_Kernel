@@ -96,6 +96,11 @@
 #define DBG_LIMIT(x...) do {} while (0)
 #endif
 
+//Slate Code Start
+bool slate_counter_flag = false;
+EXPORT_SYMBOL(slate_counter_flag);
+//Slate Code End
+
 struct rpc_reply_batt_chg_v1 {
 	struct rpc_reply_hdr hdr;
 	u32 	more_data;
@@ -338,9 +343,10 @@ static void msm_batt_update_batt_status(void)
             if (msm_batt_info.batt_level == BATTERY_LEVEL_FULL) {
                 discharging_counter = 0;
                 msm_batt_info.batt_status = POWER_SUPPLY_STATUS_FULL;
-            } else if (discharging_counter > 5) {
+            } else if (discharging_counter > 5 || slate_counter_flag ) {
                 discharging_counter = 0;
                 msm_batt_info.batt_status = POWER_SUPPLY_STATUS_DISCHARGING;
+				slate_counter_flag = false;
             } else if (msm_batt_info.batt_status != POWER_SUPPLY_STATUS_DISCHARGING) {
                 discharging_counter++;
                 if (msm_batt_info.batt_status != POWER_SUPPLY_STATUS_DISCHARGING)

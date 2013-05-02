@@ -177,7 +177,6 @@ int msm_proc_comm_oem(unsigned cmd, unsigned *data1, unsigned *data2, unsigned *
 //SW2-5-1-MP-DbgCfgTool-00+[
 int msm_proc_comm_oem_n(unsigned cmd, unsigned *data1, unsigned *data2, unsigned *cmd_parameter, int para_size);
 #define NV_FIHDBG_I    51001
-#define NV_ERR_FATAL_OPTIONS_I    905 //SW2-5-1-MP-Modem_Debug_NV-00+
 /*--------------------------------------------------------------------------* 
  * Size of smem_oem_cmd_data to carry both return value and FIH debug 
  * configurations.
@@ -230,8 +229,6 @@ int fih_read_fihversion_nv( unsigned char* );     //Div2D5-LC-BSP-Porting_OTA_SD
  *     Not zero - Fail
  *--------------------------------------------------------------------------*/
 int fih_write_fihdbg_config_nv( unsigned char* );
-
-int fih_write_modem_debug_nv( int value ); //SW2-5-1-MP-Modem_Debug_NV-00+
 //SW2-5-1-MP-DbgCfgTool-00+]
 
 typedef union
