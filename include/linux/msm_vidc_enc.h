@@ -80,6 +80,11 @@
 #define VEN_BUFFLAG_EXTRADATA	0x00000040
 #define VEN_BUFFLAG_CODECCONFIG	0x00000080
 
+/*Post processing flags bit masks*/
+#define VEN_EXTRADATA_NONE          0x001
+#define VEN_EXTRADATA_QCOMFILLER    0x002
+#define VEN_EXTRADATA_SLICEINFO     0x100
+
 /*ENCODER CONFIGURATION CONSTANTS*/
 
 /*Encoded video frame types*/
@@ -130,6 +135,7 @@
 #define VEN_LEVEL_H263_50	0x19/* H.263 Level 50  */
 #define VEN_LEVEL_H263_60	0x1A/* H.263 Level 60  */
 #define VEN_LEVEL_H263_70	0x1B/* H.263 Level 70  */
+#define VEN_LEVEL_H264_3p2	0x1C/* H.264 Level 3.2 */
 
 /*Entropy coding model selection for H.264 encoder.*/
 #define VEN_ENTROPY_MODEL_CAVLC	1
@@ -155,6 +161,7 @@
 #define VEN_RC_VBR_VFR	2
 #define VEN_RC_VBR_CFR	3
 #define VEN_RC_CBR_VFR	4
+#define VEN_RC_CBR_CFR	5
 
 /*Different modes for flushing buffers*/
 #define VEN_FLUSH_INPUT	1
@@ -273,6 +280,16 @@ struct venc_ioctl_msg{
 
 /* Asynchronous respone message code:VEN_MSG_STOP*/
 #define VEN_IOCTL_CMD_STOP _IO(VEN_IOCTLBASE_NENC, 19)
+
+#define VEN_IOCTL_SET_RECON_BUFFER \
+	_IOW(VEN_IOCTLBASE_NENC, 20, struct venc_ioctl_msg)
+
+#define VEN_IOCTL_FREE_RECON_BUFFER \
+	_IOW(VEN_IOCTLBASE_NENC, 21, struct venc_ioctl_msg)
+
+#define VEN_IOCTL_GET_RECON_BUFFER_SIZE \
+	_IOW(VEN_IOCTLBASE_NENC, 22, struct venc_ioctl_msg)
+
 
 
 /*ENCODER PROPERTY CONFIGURATION & CAPABILITY IOCTLs*/
@@ -454,6 +471,17 @@ struct venc_ioctl_msg{
 #define VEN_IOCTL_GET_NUMBER_INSTANCES \
 	_IOR(VEN_IOCTLBASE_ENC, 46, struct venc_ioctl_msg)
 
+#define VEN_IOCTL_SET_METABUFFER_MODE \
+	_IOW(VEN_IOCTLBASE_ENC, 47, struct venc_ioctl_msg)
+
+
+/*IOCTL params:SET: InputData - unsigned int, OutputData - NULL.*/
+#define VEN_IOCTL_SET_EXTRADATA \
+	_IOW(VEN_IOCTLBASE_ENC, 48, struct venc_ioctl_msg)
+/*IOCTL params:GET: InputData - NULL, OutputData - unsigned int.*/
+#define VEN_IOCTL_GET_EXTRADATA \
+	_IOR(VEN_IOCTLBASE_ENC, 49, struct venc_ioctl_msg)
+
 struct venc_switch{
 	unsigned char	status;
 };
@@ -517,6 +545,7 @@ struct venc_qprange{
 };
 struct venc_intraperiod{
 	unsigned long	num_pframes;
+	unsigned long	num_bframes;
 };
 struct venc_seqheader{
 	unsigned char *hdrbufptr;
@@ -594,4 +623,19 @@ struct venc_msg{
 	struct venc_buffer	buf;
 	unsigned long	msgdata_size;
 };
+
+struct venc_recon_addr{
+	unsigned char *pbuffer;
+	unsigned long buffer_size;
+	unsigned long pmem_fd;
+	unsigned long offset;
+};
+
+struct venc_recon_buff_size{
+	int width;
+	int height;
+	int size;
+	int alignment;
+};
+
 #endif /* _MSM_VIDC_ENC_H_ */
