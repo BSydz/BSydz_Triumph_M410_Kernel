@@ -12,6 +12,7 @@ config ARM
 	select HAVE_IDE
 	select RTC_LIB
 	select SYS_SUPPORTS_APM_EMULATION
+	select GENERIC_ATOMIC64 if (!CPU_32v6K)
 	select HAVE_OPROFILE
 	select HAVE_ARCH_KGDB
 	select HAVE_KPROBES if (!XIP_KERNEL)
@@ -804,6 +805,36 @@ config KEXEC
 	  is properly shutdown, so do not be surprised if this code does not
 	  initially work for you.  It may help to enable device hotplugging
 	  support.
+
+config CRASH_NOTES
+	bool "Support for storing crash_notes"
+	default n
+	help
+	  Expose crash_notes and fill it with register values at the time of
+	  panic.
+
+config CRASH_NOTES_MAGIC
+	bool "Add magic and details to crash_notes"
+	default y
+	depends on CRASH_NOTES
+	help
+	  Adds magic values the structure to allow tools to
+	  find this section without the need of a ELF or SYM/MAP file.
+
+config CRASH_NOTES_VM
+	bool "Add information about VM layout"
+	default y
+	depends on CRASH_NOTES && CRASH_NOTES_MAGIC
+	help
+	  This will extend the crash_notes by adding information about the
+	  virtual memory setup (start address and if it's sparse or flatmem).
+
+config CONSOLE_CONTROL
+	bool "Export console_control interface"
+	default n
+	help
+	  Export console_control interface, in order to dynamically control whether
+	  printk output to uart console.
 
 config ATAGS_PROC
 	bool "Export atags in procfs"

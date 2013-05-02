@@ -5669,6 +5669,12 @@ static struct mddi_platform_data mddi_pdata = {
 #endif // CONFIG_FB_MSM_MDDI
 //SW2-6-MM-JH-Display_Flag-00-
 
+int mdp_core_clk_rate_table[] = {
+	122880000,
+	122880000,
+	122880000,
+	192000000,
+};
 static struct msm_panel_common_pdata mdp_pdata = {
 	.hw_revision_addr = 0xac001270,
 /* Div2-SW2-BSP-FBX-LEDS { */
@@ -5677,6 +5683,8 @@ static struct msm_panel_common_pdata mdp_pdata = {
 #endif
 /* } Div2-SW2-BSP-FBX-LEDS */
 	.mdp_core_clk_rate = 122880000,
+	.mdp_core_clk_table = mdp_core_clk_rate_table,
+	.num_mdp_clk = ARRAY_SIZE(mdp_core_clk_rate_table),
 };
 
 /* FIHTDC, Div2-SW2-BSP, Ming, LCM { */

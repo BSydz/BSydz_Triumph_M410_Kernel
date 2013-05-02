@@ -60,7 +60,7 @@ extern void printascii(char *);
 
 /* We show everything that is MORE important than this.. */
 #define MINIMUM_CONSOLE_LOGLEVEL 1 /* Minimum loglevel we let people use */
-#define DEFAULT_CONSOLE_LOGLEVEL 7 /* anything MORE serious than KERN_DEBUG */
+#define DEFAULT_CONSOLE_LOGLEVEL 8 /* anything MORE serious than KERN_DEBUG */
 
 DECLARE_WAIT_QUEUE_HEAD(log_wait);
 /* ++ FIHTDC Div2-SW2-BSP AlbertYCFang 2010.08.31 ++ */
@@ -1307,6 +1307,15 @@ EXPORT_SYMBOL(console_stop);
 
 void console_start(struct console *console)
 {
+/*
+ * If enable console_control feature and console is disabled
+ * in console_control module, it doesn't be permitted to enable
+ * console in other modules.
+ */
+#ifdef CONFIG_CONSOLE_CONTROL
+	if (console_value == 0)
+		return;
+#endif
 	acquire_console_sem();
 	console->flags |= CON_ENABLED;
 	release_console_sem();

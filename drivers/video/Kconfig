@@ -2189,6 +2189,11 @@ config FB_MSM_MDP40
 	  Say Y here if this is msm7x30 variant platform.
 endchoice
 
+config FB_MSM_MSM2_1_DISABLE
+	depends on FB_MSM_MDP40
+	bool "MSM2.1 HW fix disable"
+	default n
+
 config FB_MSM_EBI2
 	bool
 	default n
@@ -2215,6 +2220,19 @@ config FB_MSM_DTV
 	bool
 	default n
 
+config FB_MSM_PANEL_ESD
+	bool "PANEL ESD support"
+	default n
+
+config FB_MSM_MDDI_LCD_WINDOW_ADJUST
+	depends on FB_MSM_MDDI
+	bool "MSM MDDI LCD windows adjust"
+	default n
+
+config FB_MSM_MDDI_NOVATEK_DISABLE_MDDI
+	bool "Disable MDDI"
+	default n
+
 config FB_MSM_EXTMDDI
 	bool
 	default n
@@ -2234,6 +2252,11 @@ config FB_MSM_MDDI_TOSHIBA_COMMON_VGA
 	default n
 
 config FB_MSM_MDDI_ORISE
+	bool
+	select FB_MSM_MDDI
+	default n
+
+config FB_MSM_MDDI_QUICKVX
 	bool
 	select FB_MSM_MDDI
 	default n
